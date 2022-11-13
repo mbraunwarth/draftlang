@@ -1,10 +1,16 @@
 package main
 
+import "fmt"
+
 type Token struct {
 	typ  TokenType
 	val  string
 	line int
 	col  int
+}
+
+func (t Token) String() string {
+	return fmt.Sprintf("Token{%s, %s, %d, %d}", t.typ, t.val, t.line, t.col)
 }
 
 type TokenType int
@@ -23,8 +29,8 @@ const (
 	// Braces
 	LeftParan
 	RightParan
-	LeftBrace
-	RightBrace
+	LeftSquare
+	RightSquare
 	LeftCurl
 	RightCurl
 
@@ -50,6 +56,7 @@ const (
 	Let
 	Print
 	Symbol
+	Comment
 )
 
 func (typ TokenType) String() string {
@@ -74,10 +81,10 @@ func (typ TokenType) String() string {
 		return "LeftParan"
 	case RightParan:
 		return "RightParan"
-	case LeftBrace:
-		return "LeftBrace"
-	case RightBrace:
-		return "RightBrace"
+	case LeftSquare:
+		return "LeftSquare"
+	case RightSquare:
+		return "RightSquare"
 	case LeftCurl:
 		return "LeftCurl"
 	case RightCurl:
@@ -116,6 +123,8 @@ func (typ TokenType) String() string {
 		return "Or"
 	case Symbol:
 		return "Symbol"
+	case Comment:
+		return "Comment"
 	default:
 		return "Unknown"
 	}

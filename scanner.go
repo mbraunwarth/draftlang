@@ -1,6 +1,9 @@
 package main
 
-import "unicode"
+import (
+	"log"
+	"unicode"
+)
 
 type Scanner struct {
 	src   string // whole source code as text
@@ -63,8 +66,27 @@ func (sc *Scanner) run(buf chan<- Token) {
 				buf <- Token{Plus, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 			}
 		case '*':
+			if sc.peek() == '=' {
+				sc.advance()
+				buf <- Token{StarEqual, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			} else {
+				buf <- Token{Star, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			}
 		case '/':
+			if sc.peek() == '/' {
+				// take comment lines as one token
+				for sc.peek() != '\n' {
+					sc.advance()
+				}
+			}
+			buf <- Token{Comment, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case '!':
+			if sc.peek() == '=' {
+				sc.advance()
+				buf <- Token{BangEqual, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			} else {
+				buf <- Token{Bang, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			}
 		case '=':
 			if sc.peek() == '=' {
 				sc.advance()
@@ -73,15 +95,41 @@ func (sc *Scanner) run(buf chan<- Token) {
 				buf <- Token{Equal, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 			}
 		case '<':
+			if sc.peek() == '=' {
+				sc.advance()
+				buf <- Token{LessEqual, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			} else {
+				buf <- Token{Less, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			}
 		case '>':
+			if sc.peek() == '=' {
+				sc.advance()
+				buf <- Token{GreaterEqual, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			} else {
+				buf <- Token{Greater, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			}
 		case '(':
+			buf <- Token{LeftParan, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case ')':
+			buf <- Token{RightParan, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case '[':
+			buf <- Token{LeftSquare, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case ']':
+			buf <- Token{RightSquare, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case '{':
+			buf <- Token{LeftCurl, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case '}':
+			buf <- Token{RightCurl, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case '"':
 			// scan here for string literals
+			for sc.peek() != '"' {
+				if !sc.advance() {
+					log.Fatal("Scan Error: Unterminated string literal.")
+				}
+			}
+			// ignore surrounding quotes
+			buf <- Token{StringLit, sc.src[sc.start+1 : sc.pos+1], sc.line, lineStart}
+			sc.advance()
 		case '\n':
 			// reset column counter and increment line count
 			sc.col = 0
@@ -126,6 +174,7 @@ func (sc *Scanner) advance() bool {
 	return true
 }
 
+// peek returns the rune right after the current position.
 func (sc *Scanner) peek() rune {
 	if len(sc.src) < sc.pos {
 		sc.errs = append(sc.errs, ScanError{sc.line, sc.col, "Expected symbol, found EOF."})

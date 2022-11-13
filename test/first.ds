@@ -1,2 +1,6 @@
 let hello = "Hello, World!"
 print(hello)
+
+let a = 5 + 2
+a += 35
+print (a)
