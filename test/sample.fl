@@ -1,0 +1,28 @@
+// this is a FunLang sample script
+
+// functions are first-class citizens
+fun add (a, b) = a + b
+
+fun sayHelloWorld () {
+    sayHello("World")
+}
+
+fun sayHelloMaster (to) {
+    print("Hello, #{to}!") // string interpolation
+}
+
+// print is a core library function calling the `write` built-in
+fun print(str) {
+    write(io.stdout, str)
+}
+
+fun main() {
+    sayHello() // => Hello, World!
+
+    let me = "Master"
+    sayHelloMaster(me) // => Hello, Master!
+
+    let x = 20
+    let y = 22
+    print("#{add(x, y)}") // => 42
+}

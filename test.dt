@@ -1,0 +1,6 @@
+let firstNum = 22
+let _second_num = 20.0
+let c = a + b
+print(c)
+
+print("Hello, World!")
