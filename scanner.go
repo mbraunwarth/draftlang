@@ -154,8 +154,12 @@ func (sc *Scanner) run(buf chan<- Token) {
 					}
 				}
 
+				// TODO restrict multiple floating points in numbers as they result
+				//		in incorrect tokens
+
 				buf <- Token{NumberLit, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 			case unicode.IsLetter(sc.r):
+				// TODO proper error handling if user left string literal unclosed
 				for unicode.IsLetter(sc.peek()) {
 					sc.advance()
 				}
