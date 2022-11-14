@@ -46,17 +46,20 @@ const (
 	// Literal Token
 	NumberLit
 	StringLit
-	TrueLit
-	FalseLit
-	NilLit
 
 	// Keywords
 	And
-	Or
-	Let
-	Print
-	Symbol
 	Comment
+	Const
+	False
+	Fun
+	Let
+	Nil
+	Or
+	Print
+	Return
+	Symbol
+	True
 )
 
 func (typ TokenType) String() string {
@@ -107,24 +110,30 @@ func (typ TokenType) String() string {
 		return "NumberLit"
 	case StringLit:
 		return "StringLit"
-	case TrueLit:
-		return "TrueLit"
-	case FalseLit:
-		return "FalseLit"
-	case NilLit:
-		return "NilLit"
 	case Print:
 		return "Print"
+	case Return:
+		return "Return"
 	case Let:
 		return "Let"
 	case And:
 		return "And"
+	case Const:
+		return "Const"
+	case False:
+		return "False"
+	case Fun:
+		return "Fun"
 	case Or:
 		return "Or"
 	case Symbol:
 		return "Symbol"
 	case Comment:
 		return "Comment"
+	case True:
+		return "True"
+	case Nil:
+		return "Nil"
 	default:
 		return "Unknown"
 	}

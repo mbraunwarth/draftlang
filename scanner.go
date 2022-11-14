@@ -78,8 +78,10 @@ func (sc *Scanner) run(buf chan<- Token) {
 				for sc.peek() != '\n' {
 					sc.advance()
 				}
+				buf <- Token{Comment, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
+			} else {
+				buf <- Token{Slash, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 			}
-			buf <- Token{Comment, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 		case '!':
 			if sc.peek() == '=' {
 				sc.advance()
@@ -157,9 +159,17 @@ func (sc *Scanner) run(buf chan<- Token) {
 				for unicode.IsLetter(sc.peek()) {
 					sc.advance()
 				}
+
+				// cache scanned symbol to check if it is a valid keyword
 				val := sc.src[sc.start : sc.pos+1]
-				// TODO check if val is keyword and if, which
-				buf <- Token{Symbol, val, sc.line, lineStart}
+				var typ TokenType
+				if IsKeyword(val) {
+					typ = TypeFromKeyword(val)
+				} else {
+					typ = Symbol
+				}
+
+				buf <- Token{typ, val, sc.line, lineStart}
 			}
 		}
 
