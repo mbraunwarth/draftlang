@@ -138,10 +138,20 @@ func (sc *Scanner) run(buf chan<- Token) {
 			// scan here for number literal, symbols or keywords
 			switch {
 			case unicode.IsNumber(sc.r):
-				// TODO support for floating point numbers
 				for unicode.IsNumber(sc.peek()) {
 					sc.advance()
 				}
+
+				// check if number is float
+				if sc.peek() == '.' {
+					// skip floating point
+					sc.advance()
+					// scan remaining number fraction
+					for unicode.IsNumber(sc.peek()) {
+						sc.advance()
+					}
+				}
+
 				buf <- Token{NumberLit, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 			case unicode.IsLetter(sc.r):
 				for unicode.IsLetter(sc.peek()) {

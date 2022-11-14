@@ -16,7 +16,7 @@ func main() {
 	} else if len(args) == 1 {
 		runFile(args[0])
 	} else {
-		fmt.Println("Usage: fli [script]")
+		fmt.Println("Usage: drafti [script]")
 		os.Exit(64)
 	}
 }
