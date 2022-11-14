@@ -55,10 +55,13 @@ func runRepl() {
 			}
 			log.Fatal(err)
 		}
-		line := string(bs)
+
+		// evaluate
+		sc := NewScanner(string(append(bs, '\n')))
+		ts := sc.Scan()
 
 		// response
-		fmt.Println(line)
+		fmt.Println(ts)
 	}
 
 }
