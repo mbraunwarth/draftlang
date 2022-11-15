@@ -60,6 +60,8 @@ const (
 	Return
 	Symbol
 	True
+
+	Unknown
 )
 
 func (typ TokenType) String() string {

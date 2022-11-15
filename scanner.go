@@ -48,7 +48,9 @@ func (sc *Scanner) Scan() []Token {
 
 func (sc *Scanner) run(buf chan<- Token) {
 	for {
+		// cache current tokens start position in buffered source code
 		sc.start = sc.pos
+		// cache current tokens start position relative to last newline character
 		lineStart := sc.col
 		switch sc.r {
 		case '+':
@@ -174,7 +176,10 @@ func (sc *Scanner) run(buf chan<- Token) {
 				}
 
 				buf <- Token{typ, val, sc.line, lineStart}
+			default:
+				buf <- Token{Unknown, sc.src[sc.start : sc.pos+1], sc.line, lineStart}
 			}
+
 		}
 
 		if !sc.advance() {
